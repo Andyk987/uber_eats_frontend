@@ -11,7 +11,7 @@ import { LOCALSTORAGE_TOKEN } from "../constants";
 import uberLogo from '../images/uber_eats.svg';
 import { loginMutation, loginMutationVariables } from '../__generated__/loginMutation';
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
 	mutation loginMutation($loginInput: LoginInput!) {
 		login(input: $loginInput) {
 			ok
@@ -107,9 +107,6 @@ export const Login = () => {
 					/>
 					{errors.password?.message && (
 						<FormError errorMessage={errors.password?.message} />
-					)}
-					{errors.password?.type === "minLength" && (
-						<FormError errorMessage="Password must be more than 10 chars." />
 					)}
 					<Button
 						canClick={formState.isValid}

@@ -3,13 +3,26 @@ import {
 	InMemoryCache,
 	makeVar,
 	createHttpLink,
+	split
 } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { setContext } from '@apollo/client/link/context';
+import { WebSocketLink } from '@apollo/client/link/ws';
 import { LOCALSTORAGE_TOKEN } from './constants';
 
 const token = localStorage.getItem(LOCALSTORAGE_TOKEN);
 export const isLoggedInVar = makeVar(Boolean(token));
 export const authTokenVar = makeVar(token);
+
+const wsLink = new WebSocketLink({
+	uri: 'wss://bycproject.run.goorm.io/graphql',
+	options: {
+		reconnect: true,
+		connectionParams: {
+			"x-jwt": authTokenVar() || "",
+		},
+	},
+});
 
 const httpLink = createHttpLink({
 	uri: 'https://bycproject.run.goorm.io/graphql',
@@ -24,8 +37,20 @@ const authLink = setContext((_, { headers }) => {
 	};
 });
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink),
+);
+
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: new InMemoryCache({
 		typePolicies: {
 			Query: {
