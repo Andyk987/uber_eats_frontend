@@ -15,7 +15,7 @@ export const isLoggedInVar = makeVar(Boolean(token));
 export const authTokenVar = makeVar(token);
 
 const wsLink = new WebSocketLink({
-	uri: 'wss://bycproject.run.goorm.io/graphql',
+	uri: process.env.NODE_ENV === 'production' ? "wss://uber-eats-clone.herokuapp.com/" : 'wss://bycproject.run.goorm.io/graphql',
 	options: {
 		reconnect: true,
 		connectionParams: {
@@ -25,7 +25,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-	uri: 'https://bycproject.run.goorm.io/graphql',
+	uri: process.env.NODE_ENV === 'production' ? "wss://uber-eats-clone.herokuapp.com/" : 'wss://bycproject.run.goorm.io/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
