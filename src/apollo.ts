@@ -25,7 +25,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-	uri: process.env.NODE_ENV === 'production' ? "wss://uber-eats-clone.herokuapp.com/" : 'wss://bycproject.run.goorm.io/graphql',
+	uri: process.env.NODE_ENV === 'production' ? "https://uber-eats-clone.herokuapp.com/" : 'https://bycproject.run.goorm.io/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
